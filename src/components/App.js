@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
 import '../styles/App.css';
+import Form from './Form';
+import Vehicles from './Vehicles';
+
+import Jumbotron from './Jumbotron'
 
 class App extends Component {
   // PROPS AND STATE
@@ -7,13 +11,11 @@ class App extends Component {
   // You should set state for vehicles (empty array), value (empty string), pilot (empty) string.
   // Enter your code below:
 
-  constructor(props){
-    super(props);
-    this.state = {
+    state = {
       vehicles: [],
       value: "",
       pilot: "",
-    };
+    }
 
 
   // FORM: HANDLE INPUT CHANGES
@@ -21,12 +23,9 @@ class App extends Component {
   // See form lesson for details.
   // Enter your code below:
 
-  this.handleNameChange = this.handleNameChange.bind(this);
-}
-
-  handleNameChange(event){
+  handleNameChange = (event) => {
     this.setState({
-      name: event.target.value
+      value: event.target.value
     })
   }
 
@@ -37,19 +36,13 @@ class App extends Component {
   // Then, set the value of the input back to an empty string.
   // Enter your code below:
 
-  handleSubmit(event){
-    event.preventDefault()
-    const pilotState = {
-      name: this.state.name
-    }
-    const submission = this.state.submission;
-    submission.push(pilotState)
-    console.log("Ayy dis works!");
+  handleSubmit = (event) => {
+    event.preventDefault();
     this.setState({
-      name: ""
+      pilot: this.state.value,
+      value: ''
     })
   }
-
 
   // LIFECYCLE
   // Which lifecycle is best for fetching data?
@@ -62,9 +55,9 @@ class App extends Component {
   componentWillMount() {
   fetch('https://swapi.co/api/vehicles/')
   .then(r => r.json() )
-  .then((json) => {
-    console.log("Data from componentWillMount fetch", json)
-    this.setState({json})
+  .then(({results}) => {
+    console.log("Data from componentWillMount fetch")
+    this.setState({vehicles:results});
   })
 }
 
@@ -80,21 +73,17 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-      <form onSubmit={this.handleSubmit}>
-                <div className="form-group">
-                  <input className="form-control col-md-3" onChange={this.handleNameChange} value={this.state.name} name="name"  type="text"/>
-                </div>
-                <div className="form-group pull-right">
-                  <input className="btn btn-primary btn-lg" type="submit" value="Submit"/>
-                </div>
-              </form>
+      < Jumbotron />
+      < Form handleSubmit={this.handleSubmit}
+       handleNameChange={this.handleNameChange} value= {this.state.pilot} name={this.state.value}  />
+       {this.state.vehicles.map(vehicle=> <Vehicles key={vehicle.url} {...vehicle} />)}
 
-        {/*
-        The App component needs the following:
-         jumbotron section, form section, vehicle cards section.
-         Your form will also need a header in which you will pass the state of the form upon submit.
-         */}
       </div>
+
+
+
+
+
     );
     /*
     Store vehicles state in a variable.
